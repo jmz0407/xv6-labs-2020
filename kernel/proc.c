@@ -291,6 +291,8 @@ fork(void)
 
   safestrcpy(np->name, p->name, sizeof(p->name));
 
+  np->mask = p->mask; //将父进程的 mask 复制给子进程
+
   pid = np->pid;
 
   np->state = RUNNABLE;
@@ -693,3 +695,24 @@ procdump(void)
     printf("\n");
   }
 }
+
+int trace(int mask){
+    struct proc *p = myproc();
+    p->mask = mask;
+    return 0;
+}
+
+
+int procnum(void){
+    struct proc* p;
+    int count = 0;
+    for(p = proc; p < &proc[NPROC]; p++){
+        acquire(&p->lock);
+        if(p->state != UNUSED){
+            count++;
+        }
+        release(&p->lock);
+    }
+    return count;
+}
+
