@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/binutils" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/dejagnu" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/gcc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/gdb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/glibc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/llvm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/musl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/newlib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/pk" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/QemuMacDrivers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/SLOF" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/BaseTools/Source/C/BrotliCompress/brotli" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/CryptoPkg/Library/MbedTlsLib/mbedtls" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/CryptoPkg/Library/OpensslLib/openssl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/CryptoPkg/Library/OpensslLib/openssl/gost-engine" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/CryptoPkg/Library/OpensslLib/openssl/gost-engine/libprov" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/CryptoPkg/Library/OpensslLib/openssl/krb5" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/CryptoPkg/Library/OpensslLib/openssl/pyca-cryptography" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/CryptoPkg/Library/OpensslLib/openssl/wycheproof" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/MdeModulePkg/Universal/RegularExpressionDxe/oniguruma" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/MdePkg/Library/BaseFdtLib/libfdt" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/MdePkg/Library/MipiSysTLib/mipisyst" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/MdePkg/Library/MipiSysTLib/mipisyst/external/googletest" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/MdePkg/Library/MipiSysTLib/mipisyst/external/pugixml" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/RedfishPkg/Library/JsonLib/jansson" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/UnitTestFrameworkPkg/Library/CmockaLib/cmocka" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/UnitTestFrameworkPkg/Library/GoogleTestLib/googletest" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/edk2/UnitTestFrameworkPkg/Library/SubhookLib/subhook" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/ipxe" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/openbios" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/opensbi" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/qboot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/qemu-palcode" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/seabios" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/seabios-hppa" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/skiboot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/u-boot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/u-boot-sam460ex" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/roms/vbootrom" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/qemu/tests/lcitool/libvirt-ci" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/riscv-gnu-toolchain/spike" vcs="Git" />
+  </component>
+</project>

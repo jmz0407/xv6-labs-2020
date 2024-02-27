@@ -31,15 +31,7 @@ procinit(void)
   for(p = proc; p < &proc[NPROC]; p++) {
       initlock(&p->lock, "proc");
 
-      // Allocate a page for the process's kernel stack.
-      // Map it high in memory, followed by an invalid
-      // guard page.
-      char *pa = kalloc();
-      if(pa == 0)
-        panic("kalloc");
-      uint64 va = KSTACK((int) (p - proc));
-      kvmmap(va, (uint64)pa, PGSIZE, PTE_R | PTE_W);
-      p->kstack = va;
+      // 删除为所有进程分配内核栈的代码
   }
   kvminithart();
 }
@@ -113,15 +105,44 @@ found:
     return 0;
   }
 
-  // An empty user page table.
-  p->pagetable = proc_pagetable(p);
-  if(p->pagetable == 0){
-    freeproc(p);
-    release(&p->lock);
-    return 0;
-  }
+// An empty user page table.
+    p->pagetable = proc_pagetable(p);
+    if(p->pagetable == 0){
+        freeproc(p);
+        release(&p->lock);
+        return 0;
+    }
 
-  // Set up new context to start executing at forkret,
+// Init the kernal page table
+    //p->kernelpt = kvminit_newpgtbl();
+//    if(p->kernelpt == 0){
+//        freeproc(p);
+//        release(&p->lock);
+//        return 0;
+//    }
+
+    // Allocate a page for the process's kernel stack.
+// Map it high in memory, followed by an invalid
+// guard page.
+////// 新加部分 start //////
+
+    // 为新进程创建独立的内核页表，并将内核所需要的各种映射添加到新页表上
+    p->kernelpt = kvminit_newpgtbl();
+    // printf("kernel_pagetable: %p\n", p->kernelpgtbl);
+
+    // 分配一个物理页，作为新进程的内核栈使用
+    char *pa = kalloc();
+    if(pa == 0)
+        panic("kalloc");
+    uint64 va = KSTACK((int)0); // 将内核栈映射到固定的逻辑地址上
+    // printf("map krnlstack va: %p to pa: %p\n", va, pa);
+    kvmmap(p->kernelpt, va, (uint64)pa, PGSIZE, PTE_R | PTE_W);
+    p->kstack = va; // 记录内核栈的逻辑地址，其实已经是固定的了，依然这样记录是为了避免需要修改其他部分 xv6 代码
+
+////// 新加部分 end //////
+
+
+    // Set up new context to start executing at forkret,
   // which returns to user space.
   memset(&p->context, 0, sizeof(p->context));
   p->context.ra = (uint64)forkret;
@@ -133,6 +154,23 @@ found:
 // free a proc structure and the data hanging from it,
 // including user pages.
 // p->lock must be held.
+// 递归释放一个内核页表中的所有 mapping，但是不释放其指向的物理页
+void
+kvm_free_kernelpgtbl(pagetable_t pagetable)
+{
+    // there are 2^9 = 512 PTEs in a page table.
+    for(int i = 0; i < 512; i++){
+        pte_t pte = pagetable[i];
+        uint64 child = PTE2PA(pte);
+        if((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0){ // 如果该页表项指向更低一级的页表
+            // 递归释放低一级页表及其页表项
+            kvm_free_kernelpgtbl((pagetable_t)child);
+            pagetable[i] = 0;
+        }
+    }
+    kfree((void*)pagetable); // 释放当前级别页表所占用空间
+}
+
 static void
 freeproc(struct proc *p)
 {
@@ -142,6 +180,13 @@ freeproc(struct proc *p)
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
   p->pagetable = 0;
+
+//  // free the kernel stack in the RAM
+//  uvmunmap(p->kernelpt, p->kstack, 1, 1);
+//  p->kstack = 0;
+//  if(p->kernelpt)
+//      proc_freekernelpt(p->kernelpt);
+//  p->kernelpt = 0;
   p->sz = 0;
   p->pid = 0;
   p->parent = 0;
@@ -149,6 +194,19 @@ freeproc(struct proc *p)
   p->chan = 0;
   p->killed = 0;
   p->xstate = 0;
+
+  // 释放进程的内核栈
+  void *kstack_pa = (void *)kvmpa(p->kernelpt, p->kstack);
+  // printf("trace: free kstack %p\n", kstack_pa);
+  kfree(kstack_pa);
+  p->kstack = 0;
+  // 注意：此处不能使用 proc_freepagetable，因为其不仅会释放页表本身，还会把页表内所有的叶节点对应的物理页也释放掉。
+  // 这会导致内核运行所需要的关键物理页被释放，从而导致内核崩溃。
+  // 这里使用 kfree(p->kernelpgtbl) 也是不足够的，因为这只释放了**一级页表本身**，而不释放二级以及三级页表所占用的空间。
+  // 递归释放进程独享的页表，释放页表本身所占用的空间，但**不释放页表指向的物理页**
+  kvm_free_kernelpgtbl(p->kernelpt);
+  p->kernelpt = 0;
+
   p->state = UNUSED;
 }
 
@@ -221,6 +279,9 @@ userinit(void)
   uvminit(p->pagetable, initcode, sizeof(initcode));
   p->sz = PGSIZE;
 
+  // 同步程序内存映射到内核页表
+  kvmcopymappings(p->pagetable, p->kernelpt, 0, p->sz);
+
   // prepare for the very first "return" from kernel to user.
   p->trapframe->epc = 0;      // user program counter
   p->trapframe->sp = PGSIZE;  // user stack pointer
@@ -243,11 +304,20 @@ growproc(int n)
 
   sz = p->sz;
   if(n > 0){
-    if((sz = uvmalloc(p->pagetable, sz, sz + n)) == 0) {
+    uint64 newsz;
+    if((newsz = uvmalloc(p->pagetable, sz, sz + n)) == 0) {
       return -1;
     }
+    //  内存页表中的映射同步增大
+    if(kvmcopymappings(p->pagetable, p->kernelpt, sz, n) != 0){
+        uvmdealloc(p->pagetable, newsz, sz);
+        return -1;
+    }
+    sz = newsz;
   } else if(n < 0){
-    sz = uvmdealloc(p->pagetable, sz, sz + n);
+    uvmdealloc(p->pagetable, sz, sz + n);
+    //  内核页表中的映射同步缩小
+    sz = kvmdealloc(p->kernelpt, sz, sz+ n);
   }
   p->sz = sz;
   return 0;
@@ -268,7 +338,9 @@ fork(void)
   }
 
   // Copy user memory from parent to child.
-  if(uvmcopy(p->pagetable, np->pagetable, p->sz) < 0){
+  if(uvmcopy(p->pagetable, np->pagetable, p->sz) < 0
+                        ||
+  kvmcopymappings(np->pagetable, np->kernelpt, 0, p->sz) < 0){
     freeproc(np);
     release(&np->lock);
     return -1;
@@ -471,9 +543,18 @@ scheduler(void)
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
-        p->state = RUNNING;
-        c->proc = p;
-        swtch(&c->context, &p->context);
+          p->state = RUNNING;
+          c->proc = p;
+
+        // Store the kernal page table into the SATP
+          w_satp(MAKE_SATP(p->kernelpt));
+          sfence_vma();
+
+          swtch(&c->context, &p->context);
+
+        // Come back to the global kernel page table
+          kvminithart();
+
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
@@ -697,3 +778,27 @@ procdump(void)
     printf("\n");
   }
 }
+
+void
+proc_freekernelpt(pagetable_t kernelpt)
+{
+    // similar to the freewalk method
+    // there are 2^9 = 512 PTEs in a page table.
+    for(int i = 0; i < 512; i++){
+        pte_t pte = kernelpt[i];
+        if(pte & PTE_V){
+            kernelpt[i] = 0;
+            if ((pte & (PTE_R|PTE_W|PTE_X)) == 0){
+                uint64 child = PTE2PA(pte);
+                proc_freekernelpt((pagetable_t)child);
+            }
+        }
+    }
+    kfree((void*)kernelpt);
+
+
+}
+
+
+
+
