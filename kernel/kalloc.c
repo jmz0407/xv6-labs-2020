@@ -23,10 +23,16 @@ struct {
   struct run *freelist;
 } kmem;
 
+//标记物理内存中各个内存页的使用情况，引用计数
+struct {
+    struct spinlock lock;
+    int refcount_arr[(PHYSTOP - KERNBASE) / PGSIZE];
+}refcount;
 void
 kinit()
 {
   initlock(&kmem.lock, "kmem");
+  initlock(&refcount.lock, "refcount");
   freerange(end, (void*)PHYSTOP);
 }
 
@@ -35,8 +41,11 @@ freerange(void *pa_start, void *pa_end)
 {
   char *p;
   p = (char*)PGROUNDUP((uint64)pa_start);
-  for(; p + PGSIZE <= (char*)pa_end; p += PGSIZE)
-    kfree(p);
+  for(; p + PGSIZE <= (char*)pa_end; p += PGSIZE){
+      refcount_set((uint64)p, 1);
+      kfree(p);
+  }
+
 }
 
 // Free the page of physical memory pointed at by v,
@@ -51,6 +60,9 @@ kfree(void *pa)
   if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
     panic("kfree");
 
+  if(refcount_add((uint64)pa, -1) > 0){
+      return;
+  }
   // Fill with junk to catch dangling refs.
   memset(pa, 1, PGSIZE);
 
@@ -78,5 +90,27 @@ kalloc(void)
 
   if(r)
     memset((char*)r, 5, PGSIZE); // fill with junk
+
+  if(r)
+      refcount_set((uint64)r, 1);
+
   return (void*)r;
+}
+
+int refcount_add(uint64 va, int add){
+    int index = (va - KERNBASE) / PGSIZE;
+    acquire(&refcount.lock);
+    int res = refcount.refcount_arr[index];
+    res += add;
+    refcount.refcount_arr[index] = res;
+    release(&refcount.lock);
+
+    return res;
+}
+
+void refcount_set(uint64 va, int ref){
+    int index = (va - KERNBASE) / PGSIZE;
+    acquire(&refcount.lock);
+    refcount.refcount_arr[index] = ref;
+    release(&refcount.lock);
 }
