@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="eb20f618-b6f0-4d02-9565-840bfc152cf4" name="更改" comment="完成Lab2">
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_CONNMARK.h" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_CONNMARK.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_DSCP.h" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_DSCP.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_MARK.h" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_MARK.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_RATEEST.h" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_RATEEST.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_TCPMSS.h" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter/xt_TCPMSS.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter_ipv4/ipt_ECN.h" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter_ipv4/ipt_ECN.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter_ipv4/ipt_TTL.h" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter_ipv4/ipt_TTL.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter_ipv6/ip6t_HL.h" beforeDir="false" afterPath="$PROJECT_DIR$/riscv-gnu-toolchain/linux-headers/include/linux/netfilter_ipv6/ip6t_HL.h" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="github/util" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="pgtbl" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2ciQQUQDPHcupnn5iVtZwLAsOsI" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "true",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/user" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="pingpong.c" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="xv6-labs-2020" TARGET_NAME="pingpong.c" CONFIG_NAME="pingpong.c">
+      <option name="sourceFile" value="pingpong.c" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="C/C++ 文件.pingpong.c" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="eb20f618-b6f0-4d02-9565-840bfc152cf4" name="更改" comment="" />
+      <created>1708591902286</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1708591902286</updated>
+      <workItem from="1708591903310" duration="18410000" />
+      <workItem from="1708630430782" duration="7767000" />
+      <workItem from="1708795202055" duration="12423000" />
+      <workItem from="1708915017674" duration="22393000" />
+      <workItem from="1708963094359" duration="25810000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="完成Lab1" />
+    <MESSAGE value="完成Lab2" />
+    <option name="LAST_COMMIT_MESSAGE" value="完成Lab2" />
+  </component>
+</project>

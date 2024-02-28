@@ -109,8 +109,16 @@ found:
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
+      freeproc(p);
     release(&p->lock);
     return 0;
+  }
+
+  // Allocate a trapframe page for alarm backup trapframe
+  if((p->alarm_backup = (struct trapframe *)kalloc()) == 0){
+      freeproc(p);
+      release(&p->lock);
+      return 0;
   }
 
   // An empty user page table.
@@ -127,6 +135,11 @@ found:
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
 
+  p->alarm_interval = 0;
+  p->alarm_handler = 0;
+  p->alarm_ticks_left = 0;
+  p->alarm_handler_lock = 0;
+
   return p;
 }
 
@@ -138,6 +151,9 @@ freeproc(struct proc *p)
 {
   if(p->trapframe)
     kfree((void*)p->trapframe);
+  if(p->alarm_backup){
+      kfree((void*)p->alarm_backup);
+  }
   p->trapframe = 0;
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
@@ -150,6 +166,11 @@ freeproc(struct proc *p)
   p->killed = 0;
   p->xstate = 0;
   p->state = UNUSED;
+
+    p->alarm_interval = 0;
+    p->alarm_handler = 0;
+    p->alarm_ticks_left = 0;
+    p->alarm_handler_lock = 0;
 }
 
 // Create a user page table for a given process,
