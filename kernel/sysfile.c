@@ -282,73 +282,100 @@ create(char *path, short type, short major, short minor)
 
   return ip;
 }
+#define MAX_SYMLINK_DEPTH 10
 
 uint64
 sys_open(void)
 {
-  char path[MAXPATH];
-  int fd, omode;
-  struct file *f;
-  struct inode *ip;
-  int n;
+    char path[MAXPATH];
+    int fd, omode;
+    struct file *f;
+    struct inode *ip;
+    int n;
 
-  if((n = argstr(0, path, MAXPATH)) < 0 || argint(1, &omode) < 0)
-    return -1;
+    if((n = argstr(0, path, MAXPATH)) < 0 || argint(1, &omode) < 0)
+        return -1;
 
-  begin_op();
+    begin_op();
 
-  if(omode & O_CREATE){
-    ip = create(path, T_FILE, 0, 0);
-    if(ip == 0){
-      end_op();
-      return -1;
+    if(omode & O_CREATE){
+        ip = create(path, T_FILE, 0, 0);
+        if(ip == 0){
+            end_op();
+            return -1;
+        }
+    } else {
+        if((ip = namei(path)) == 0){
+            end_op();
+            return -1;
+        }
+        ilock(ip);
+        if(ip->type == T_DIR && omode != O_RDONLY){
+            iunlockput(ip);
+            end_op();
+            return -1;
+        }
     }
-  } else {
-    if((ip = namei(path)) == 0){
-      end_op();
-      return -1;
-    }
-    ilock(ip);
-    if(ip->type == T_DIR && omode != O_RDONLY){
-      iunlockput(ip);
-      end_op();
-      return -1;
-    }
-  }
 
-  if(ip->type == T_DEVICE && (ip->major < 0 || ip->major >= NDEV)){
-    iunlockput(ip);
+    if(ip->type == T_DEVICE && (ip->major < 0 || ip->major >= NDEV)){
+        iunlockput(ip);
+        end_op();
+        return -1;
+    }
+
+    if(ip->type == T_SYMLINK && !(omode & O_NOFOLLOW)){
+        int depth = 0;
+        // Follow the symlink recursively
+        while(ip->type == T_SYMLINK){
+            // Return failure if max recursive depth exceeded
+            if(++depth == MAX_SYMLINK_DEPTH){
+                iunlockput(ip);
+                end_op();
+                return -1;
+            }
+            // Else read new target path from current symlink inode
+            if(readi(ip, 0, (uint64)path, 0, MAXPATH) < 0){
+                iunlockput(ip);
+                end_op();
+                return -1;
+            }
+            iunlockput(ip);
+            // Check if target is valid
+            if((ip = namei(path)) == 0){
+                end_op();
+                return -1; // target not exist
+            }
+            ilock(ip);
+        }
+    }
+
+    if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
+        if(f)
+            fileclose(f);
+        iunlockput(ip);
+        end_op();
+        return -1;
+    }
+
+    if(ip->type == T_DEVICE){
+        f->type = FD_DEVICE;
+        f->major = ip->major;
+    } else {
+        f->type = FD_INODE;
+        f->off = 0;
+    }
+    f->ip = ip;
+    f->readable = !(omode & O_WRONLY);
+    f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
+
+    if((omode & O_TRUNC) && ip->type == T_FILE){
+        itrunc(ip);
+    }
+
+    iunlock(ip);
     end_op();
-    return -1;
-  }
 
-  if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
-    if(f)
-      fileclose(f);
-    iunlockput(ip);
-    end_op();
-    return -1;
-  }
-
-  if(ip->type == T_DEVICE){
-    f->type = FD_DEVICE;
-    f->major = ip->major;
-  } else {
-    f->type = FD_INODE;
-    f->off = 0;
-  }
-  f->ip = ip;
-  f->readable = !(omode & O_WRONLY);
-  f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
-
-  if((omode & O_TRUNC) && ip->type == T_FILE){
-    itrunc(ip);
-  }
-
-  iunlock(ip);
-  end_op();
-
-  return fd;
+    return fd;
 }
 
 uint64
@@ -483,4 +510,30 @@ sys_pipe(void)
     return -1;
   }
   return 0;
+}
+
+uint64 sys_symlink(void){
+    struct inode *ip;
+    char target[MAXPATH], path[MAXPATH];
+    int n;
+    // Get params from user space
+    if((n = argstr(0, target, MAXPATH)) < 0 || argstr(1, path, MAXPATH) < 0)
+        return -1;
+
+    begin_op();
+    // Create inode of the symlink
+    if((ip = create(path, T_SYMLINK, 0, 0)) == 0){
+        end_op();
+        return -1;
+    }
+    // Save the target path to the first data block
+    if(writei(ip, 0, (uint64)target, 0, n) != n) {
+        iunlockput(ip);
+        end_op();
+        return -1;
+    }
+
+    iunlockput(ip);
+    end_op();
+    return 0;
 }
